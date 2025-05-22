@@ -2,6 +2,8 @@ loop do
   puts "Enter your score (0 to 100)"
   input = gets.chomp
 
+  break if input.downcase == 'exit'  
+
 
   if input.match?(/\A\d+\z/)
     score = input.to_i
