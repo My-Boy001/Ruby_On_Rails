@@ -2,7 +2,8 @@
 This document provides a clear and concise overview of basic Ruby concepts including syntax, conditionals, loops, input/output, file execution, and Git workflow. All your learning details will be structured and centralized here so that you can continue to add content as you progress in the bootcamp.
 🖥️ Installation Guide
 🔧 Install Ruby & IRB
-Windows:
+# Windows:
+
 Install Ruby from https://rubyinstaller.org.
 During the setup process, make sure to select the option "Add Ruby to PATH" to allow Ruby commands to be run from any directory in your terminal.
 IRB (Interactive Ruby) is automatically included with the RubyInstaller.
@@ -45,14 +46,13 @@ This section guides you through setting up a new Ruby project using Git.
 1. Clone Repository (if starting from an existing project):
 If you have an existing project on GitHub (or another Git hosting service), you can clone it to your local machine:
 git clone <repo-url>
-cd Ruby_On_Rails # Replace 'Ruby_On_Rails' with your repository's directory name
+cd Ruby_On_Rails 
 
 
 2. Initialize Git (if starting a new project locally):
 If you're starting a brand new project on your computer, you'll want to initialize a Git repository in your project folder:
 git init
-git checkout -b your-branch-name # Create and switch to a new development branch
-
+git checkout -b your-branch-name 
 
 3. Run Ruby Files:
 Once your project is set up, you can run individual Ruby files from your terminal:
@@ -79,21 +79,19 @@ git init
 
 Create a Branch:
 It's good practice to work on a separate branch for new features or changes, rather than directly on the main or master branch.
-git checkout -b personal-info # Creates a new branch named 'personal-info' and switches to it
-
+git checkout -b personal-info 
 
 Add Files and Commit:
 After making changes to your files, you need to "stage" them (add them to the staging area) and then "commit" them (save a snapshot of your changes to the repository's history).
-git add . # Stages all changes in the current directory and its subdirectories
-git commit -m "Add hello.rb and personal.rb scripts" # Commits staged changes with a descriptive message
+git add . 
+git commit -m "Add hello.rb and personal.rb scripts" 
 
 
-Push to GitHub:
+# Push to GitHub:
 To share your local changes with a remote repository (like on GitHub), you need to push them.
 First-time push to a new remote:
-git remote add origin <repo-url> # Links your local repository to a remote one (replace <repo-url>)
-git push -u origin personal-info # Pushes your branch to the remote and sets it as the upstream branch
-
+git remote add origin <repo-url>
+git push -u origin personal-info
 
 Subsequent pushes:
 git push
