@@ -1,5 +1,5 @@
 loop do
-  puts "Enter your score (0 to 100)"
+  puts "Enter your score (0 to 100) or type 'exit' to quit:"
   input = gets.chomp
 
   break if input.downcase == 'exit'  
