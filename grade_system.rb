@@ -1,32 +1,41 @@
 loop do
-  puts "Enter your score (0 to 100) or type 'exit' to quit:"
-  input = gets.chomp
+  begin
+    puts "Enter your score (0 to 100) or type 'exit' to quit:"
+    input = gets.chomp
 
-  break if input.downcase == 'exit'  
+    break if input.downcase == 'exit'
 
+    if input.match?(/\A\d+\z/)  # Check if input is a number
+      score = input.to_i
 
-  if input.match?(/\A\d+\z/)
-    score = input.to_i
-    if score.between?(0, 100)
-      if score >= 90
-        puts "🎓 Grade: A"
-      elsif score >= 80
-        puts "🎉 Grade: B"
-      elsif score >= 70
-        puts "👍 Grade: C"
-      elsif score >= 60
-        puts "😐 Grade: D"
+      if score.between?(0, 100)
+        case score
+        when 90..100
+          puts "🎓 Grade: A"
+        when 80..89
+          puts "🎉 Grade: B"
+        when 70..79
+          puts "👍 Grade: C"
+        when 60..69
+          puts "😐 Grade: D"
+        else
+          puts "❌ Grade: F"
+        end
       else
-        puts "❌ Grade: F"
+        puts "⚠️ Please enter a score between 0 and 100."
       end
     else
-      puts "⚠️ Please enter a score between 0 and 100."
+      puts "⚠️ Invalid input. Please enter a numeric value."
     end
-  else
-    puts "⚠️ Invalid input. Please enter a numeric value."
+
+  rescue Interrupt
+    puts "\nExiting program. Goodbye!"
+    break
+  rescue StandardError => e
+    puts "⚠️ An error occurred: #{e.message}"
   end
 
-  puts  
+  puts
 end
 
 puts "Thank you for using the grading system!"
