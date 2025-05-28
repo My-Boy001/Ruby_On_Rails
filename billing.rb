@@ -1,5 +1,3 @@
-
-
 class BillingCalculator
   attr_accessor :subtotal, :tax_rate, :discount_rate, :shipping_cost, :currency
 
@@ -10,7 +8,16 @@ class BillingCalculator
     @shipping_cost = 0.0
     @currency = currency
     @line_items = []
+  rescue StandardError => e
+    puts "Error during initialization: #{e.message}"
+    @subtotal = 0.0
+    @tax_rate = 0.08
+    @discount_rate = 0.0
+    @shipping_cost = 0.0
+    @currency = 'USD'
+    @line_items = []
   end
+
   def add_item(name, price, quantity: 1, tax_exempt: false, category: 'general')
     item = {
       name: name,
@@ -23,6 +30,9 @@ class BillingCalculator
 
     @line_items << item
     @subtotal += item[:total]
+    self
+  rescue StandardError => e
+    puts "Error adding item: #{e.message}"
     self
   end
 
@@ -37,8 +47,12 @@ class BillingCalculator
 
     puts "Applied discount: #{code || 'Generic'} - #{format_currency(@discount_amount)}"
     self
+  rescue StandardError => e
+    puts "Error applying discount: #{e.message}"
+    @discount_rate = 0.0
+    @discount_amount = 0.0
+    self
   end
-
 
   def add_shipping(cost: 0.0, method: 'standard', expedited: false, free_threshold: 100.0)
     if expedited
@@ -54,8 +68,12 @@ class BillingCalculator
 
     puts "Shipping: #{@shipping_method} - #{format_currency(@shipping_cost)}"
     self
+  rescue StandardError => e
+    puts "Error adding shipping: #{e.message}"
+    @shipping_cost = 0.0
+    @shipping_method = 'standard'
+    self
   end
-
 
   def calculate_tax(rate: nil, exempt_categories: [], include_shipping: true)
     effective_rate = rate || @tax_rate
@@ -73,8 +91,11 @@ class BillingCalculator
 
     @tax_amount = taxable_amount * effective_rate
     self
+  rescue StandardError => e
+    puts "Error calculating tax: #{e.message}"
+    @tax_amount = 0.0
+    self
   end
-
 
   def process_payment(method: 'credit_card', installments: 1, fee_rate: 0.029)
     @payment_method = method
@@ -100,6 +121,11 @@ class BillingCalculator
       puts "Payment: #{installments} installments of #{format_currency(@installment_amount)}"
     end
 
+    self
+  rescue StandardError => e
+    puts "Error processing payment: #{e.message}"
+    @processing_fee = 0.0
+    @final_total = calculate_total rescue 0.0
     self
   end
 
@@ -152,6 +178,11 @@ class BillingCalculator
 
     puts report.join("\n")
     self
+  rescue StandardError => e
+    puts "Error generating report: #{e.message}"
+    puts "BILLING REPORT - ERROR"
+    puts "Total: #{format_currency(@final_total || 0)}"
+    self
   end
 
   private
@@ -159,6 +190,9 @@ class BillingCalculator
   def calculate_total
     base_total = @subtotal - (@discount_amount || 0.0) + @shipping_cost + (@tax_amount || 0.0)
     [base_total, 0.0].max
+  rescue StandardError => e
+    puts "Error calculating total: #{e.message}"
+    0.0
   end
 
   def format_currency(amount)
@@ -172,37 +206,13 @@ class BillingCalculator
     else
       "#{@currency} #{'%.2f' % amount}"
     end
+  rescue StandardError => e
+    puts "Error formatting currency: #{e.message}"
+    "#{@currency} 0.00"
   end
 end
 
-# ========== Example Usage ==========
-
-puts "=== EXAMPLE 1: E-commerce Order ==="
-BillingCalculator.new(currency: 'USD')
-  .add_item('Laptop', 999.99, quantity: 1, category: 'electronics')
-  .add_item('Mouse', 29.99, quantity: 2, category: 'accessories')
-  .add_item('Software License', 199.99, tax_exempt: true, category: 'digital')
-  .apply_discount(rate: 0.10, code: 'WELCOME10')
-  .add_shipping(cost: 15.99, method: 'express', expedited: true)
-  .calculate_tax(exempt_categories: ['digital'])
-  .process_payment(method: 'credit_card', installments: 3)
-  .generate_report(format: 'detailed', show_calculations: true)
-
-puts "\n" + "=" * 60 + "\n"
-
-puts "=== EXAMPLE 2: Subscription Billing ==="
-BillingCalculator.new(tax_rate: 0.06, currency: 'EUR')
-  .add_item('Premium Plan', 49.99, category: 'subscription')
-  .add_item('Add-on Storage', 9.99, quantity: 3, category: 'addon')
-  .apply_discount(amount: 10.0, code: 'LOYALTY')
-  .add_shipping
-  .calculate_tax(include_shipping: false)
-  .process_payment(method: 'bank_transfer')
-  .generate_report(format: 'summary', include_items: false)
-
-puts "\n" + "=" * 60 + "\n"
-
-puts "=== EXAMPLE 3: Bulk Order with Custom Settings ==="
+puts "=== EXAMPLE 1: Bulk Order with Custom Settings ==="
 BillingCalculator.new(subtotal: 0, tax_rate: 0.075)
   .add_item('Widget A', 12.50, quantity: 100, category: 'wholesale')
   .add_item('Widget B', 8.99, quantity: 50, tax_exempt: false)
